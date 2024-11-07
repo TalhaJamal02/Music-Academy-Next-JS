@@ -15,7 +15,7 @@ export const WavyBackground = ({
   waveOpacity = 0.5,
   ...props
 }: {
-  children?: any;
+  children?: React.ReactNode; // Replacing `any` with `React.ReactNode` for children
   className?: string;
   containerClassName?: string;
   colors?: string[];
@@ -31,10 +31,11 @@ export const WavyBackground = ({
     h: number,
     nt: number,
     i: number,
-    x: number,
-    ctx: any,
-    canvas: any;
+    x: number;
+  let ctx: CanvasRenderingContext2D; // Use the specific type for the context
+  let canvas: HTMLCanvasElement; // Use the specific type for the canvas
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
   const getSpeed = () => {
     switch (speed) {
       case "slow":
@@ -47,8 +48,8 @@ export const WavyBackground = ({
   };
 
   const init = () => {
-    canvas = canvasRef.current;
-    ctx = canvas.getContext("2d");
+    canvas = canvasRef.current!;
+    ctx = canvas.getContext("2d")!;
     w = ctx.canvas.width = window.innerWidth;
     h = ctx.canvas.height = window.innerHeight;
     ctx.filter = `blur(${blur}px)`;
@@ -68,6 +69,7 @@ export const WavyBackground = ({
     "#e879f9",
     "#22d3ee",
   ];
+  
   const drawWave = (n: number) => {
     nt += getSpeed();
     for (i = 0; i < n; i++) {
@@ -75,7 +77,7 @@ export const WavyBackground = ({
       ctx.lineWidth = waveWidth || 50;
       ctx.strokeStyle = waveColors[i % waveColors.length];
       for (x = 0; x < w; x += 5) {
-        var y = noise(x / 800, 0.3 * i, nt) * 100;
+        const y = noise(x / 800, 0.3 * i, nt) * 100;
         ctx.lineTo(x, y + h * 0.5); // adjust for height, currently at 50% of the container
       }
       ctx.stroke();
@@ -83,7 +85,7 @@ export const WavyBackground = ({
     }
   };
 
-  let animationId: number;
+  let animationId: number; // Use `number` for animationId, since requestAnimationFrame returns a number
   const render = () => {
     ctx.fillStyle = backgroundFill || "black";
     ctx.globalAlpha = waveOpacity || 0.5;
